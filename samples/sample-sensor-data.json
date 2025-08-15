@@ -1,0 +1,40 @@
+[
+{"machineId":"M-01","temp":72.3,"vibration":0.02,"rpm":1480,"timestamp":"2025-08-15T10:00:00Z"},
+{"machineId":"M-01","temp":72.8,"vibration":0.03,"rpm":1482,"timestamp":"2025-08-15T10:00:05Z"},
+{"machineId":"M-02","temp":81.1,"vibration":0.06,"rpm":1520,"timestamp":"2025-08-15T10:00:00Z"},
+{"machineId":"M-02","temp":82.0,"vibration":0.07,"rpm":1518,"timestamp":"2025-08-15T10:00:05Z"},
+{"machineId":"DRY-01","temp":88.5,"humidity":14.2,"timestamp":"2025-08-15T10:00:00Z"},
+{"machineId":"DRY-01","temp":89.2,"humidity":14.1,"timestamp":"2025-08-15T10:00:05Z"},
+{"machineId":"CONV-02","speed":1.25,"loadPct":62,"timestamp":"2025-08-15T10:00:00Z"},
+{"machineId":"CONV-02","speed":1.27,"loadPct":64,"timestamp":"2025-08-15T10:00:05Z"}
+]
+samples/sample-twin-model.json
+
+{
+"twinId": "TWIN-001",
+"name": "Line A - Motor/Conveyor",
+"components": [
+{"id":"motor-M01","type":"motor","tags":["critical","rotating"]},
+{"id":"conveyor-C02","type":"conveyor","tags":["material-handling"]},
+{"id":"sensor-pack-S12","type":"sensor-pack","metrics":["temp","vibration","rpm"]}
+],
+"relationships": [
+{"from":"motor-M01","to":"conveyor-C02","relation":"drives"},
+{"from":"sensor-pack-S12","to":"motor-M01","relation":"monitors"}
+],
+"thresholds": {
+"temp": 85,
+"vibration": 0.08,
+"rpm": {"min": 1200, "max": 1800}
+},
+"bindings": {
+"motor-M01": {"machineId": "M-01"},
+"conveyor-C02": {"machineId": "CONV-02"},
+"sensor-pack-S12": {"machineId": "M-01"}
+},
+"predictive": {
+"model": "rul_model_v1",
+"features": ["temp","vibration","rpm"],
+"target": "remaining_useful_life_hours"
+}
+}
